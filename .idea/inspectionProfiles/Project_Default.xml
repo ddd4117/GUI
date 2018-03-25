@@ -5,6 +5,7 @@
       <option name="ignoredIdentifiers">
         <list>
           <option value="training_stage" />
+          <option value="test_stage" />
         </list>
       </option>
     </inspection_tool>

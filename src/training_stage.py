@@ -6,7 +6,10 @@
 #
 # WARNING! All changes made in this file will be lost!
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit
+import train.train as train
 
+import imageProcess
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -96,9 +99,17 @@ class Ui_MainWindow(object):
         font.setPointSize(24)
         self.button_capture.setFont(font)
         self.button_capture.setObjectName("button_capture")
+        self.button_capture.clicked.connect(self.do_Capture)
+        #connect method
+
         self.button_capture_next = QtWidgets.QPushButton(self.frame)
         self.button_capture_next.setGeometry(QtCore.QRect(170, 80, 161, 21))
         self.button_capture_next.setObjectName("button_capture_next")
+        # self.button_capture_next.clicked.connect(self.getInteger)
+
+        self.temp = QtWidgets.QLabel(self.frame)
+        self.temp.setGeometry(QtCore.QRect(60, 50, 100, 61))
+        self.temp.setObjectName("test")
         self.graphicsView = QtWidgets.QGraphicsView(self.widget)
         self.graphicsView.setGeometry(QtCore.QRect(370, 60, 401, 391))
         self.graphicsView.setObjectName("graphicsView")
@@ -126,7 +137,20 @@ class Ui_MainWindow(object):
         self.pushButton.setText(_translate("MainWindow", "Create Training Image"))
         self.button_capture.setText(_translate("MainWindow", "Capture"))
         self.button_capture_next.setText(_translate("MainWindow", "Next"))
+        self.temp.setText((_translate("MainWindow","test")))
+    def do_Capture(self):
+        print("image Capture - Start")
+        imageProcess.image_capture()
 
+
+    def getInteger(self):
+        text, ok = QInputDialog.getText(self, 'Input Dialog',
+                                        'Enter your name:')
+
+    def make_model(self):
+        path = 'test/testdevice1'
+        print("Training device: " + path)
+        train.training(path)
 
 if __name__ == "__main__":
     import sys

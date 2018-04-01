@@ -10,18 +10,6 @@ import train.extend as extend
 from numpy.random import seed
 from tensorflow import set_random_seed
 
-def copy_images(path):
-    classes = os.listdir(path)
-    if 'model' in classes :
-        classes.remove('model')
-
-    if 'locationInfo.txt' in classes:
-        classes.remove('locationInfo.txt')
-
-    for element in classes:
-        dir_path = path + '/' + element
-        extend.extend(dir_path)
-
 def create_weights(shape):
     return tf.Variable(tf.truncated_normal(shape, stddev=0.05))
 
@@ -92,10 +80,12 @@ def training(path):
     seed(1)
     set_random_seed(2)
 
-    batch_size = 8
+    batch_size = 32
     num_iteration = 1000
     # Prepare input data classes : correct, incorrect -> 2
-    classes = os.listdir(path) # ['correct', 'incorrect']
+
+    trainImage_path = path + '/t_images'
+    classes = os.listdir(trainImage_path) # ['correct', 'incorrect']
     for field in classes:
         if field == 'model' or field == 'locationInfo.txt':
             classes.remove(field)
@@ -104,11 +94,11 @@ def training(path):
 
     # 20% of the data will automatically be used for validation
     validation_size = 0.2
-    img_size = 128
+    img_size = 256
     num_channels = 3
 
     # We shall load all the training and validation images and labels into memory using openCV and use that during training
-    data = dataset.read_train_sets(path, img_size, classes, validation_size=validation_size)
+    data = dataset.read_train_sets(trainImage_path, img_size, classes, validation_size=validation_size)
 
     print("Complete reading input data. Will Now print a snippet of it")
     print("Number of files in Training-set:\t\t{}".format(len(data.train.labels)))
@@ -127,12 +117,12 @@ def training(path):
     num_filters_conv1 = 32
 
     filter_size_conv2 = 3
-    num_filters_conv2 = 32
+    num_filters_conv2 = 64
 
     filter_size_conv3 = 3
-    num_filters_conv3 = 64
+    num_filters_conv3 = 128
 
-    fc_layer_size = 128
+    fc_layer_size = 256
 
     total_iterations = 0
     # convolution layer 1

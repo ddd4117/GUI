@@ -27,14 +27,15 @@ def save(image, path, index):
     new = correct( image.rotate(-5) )
     new.save(filename + str(index) + '5.jpg')
 
-def extend(path):
-    print('extending: ', path)
-    files = os.listdir(path)
+def extend(new_path, origin_path, side):
+    print('extending: ', origin_path)
+    files = os.listdir(origin_path)
     for image in files:
-        image_path = path + '/' + image
-        origin = Image.open(image_path)
+        image_path = new_path + '/' + side + '_' + image + '_'
+        origin = Image.open( origin_path + '/' + image)
         image = convert(origin)
         width, height = image.size
+
         area = (0, 0, width - 20, height - 20)
         new = convert( image.crop( area ) )
         save(new, image_path, 1)

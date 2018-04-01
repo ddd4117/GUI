@@ -113,4 +113,4 @@ def read_train_sets(train_path, image_size, classes, validation_size):
   data_sets.train = DataSet(train_images, train_labels, train_img_names, train_cls)
   data_sets.valid = DataSet(validation_images, validation_labels, validation_img_names, validation_cls)
 
-  return data_sets
+  return

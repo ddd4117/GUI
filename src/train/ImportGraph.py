@@ -16,7 +16,7 @@ class ImportGraph():
             saver.restore(self.sess,self.location)
         #self.activation = tf.get_collection(path)[0]
 
-        self.image_size = 128
+        self.image_size = 256
         self.num_channels = 3
 
     def convert(self, filename):
@@ -37,7 +37,7 @@ class ImportGraph():
         y_pred = self.graph.get_tensor_by_name(self.path + "_pred:0")
         x = self.graph.get_tensor_by_name(self.path + "_x:0")
         y_true = self.graph.get_tensor_by_name(self.path + "_true:0")
-        y_test_images = np.zeros((1, 2))
+        y_test_images = np.zeros((1, self.number))
 
         feed_dict_testing = {x: x_batch, y_true: y_test_images}
 

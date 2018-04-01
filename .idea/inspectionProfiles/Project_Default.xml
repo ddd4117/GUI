@@ -6,6 +6,7 @@
         <list>
           <option value="training_stage" />
           <option value="test_stage" />
+          <option value="imageProcess.CV_WINDOW_NORMAL" />
         </list>
       </option>
     </inspection_tool>

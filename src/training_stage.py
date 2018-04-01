@@ -87,14 +87,17 @@ class Ui_MainWindow(object):
         #this button calls make_mode method
         self.pushButton_training.clicked.connect(self.make_model)
 
-        self.pushButton = QtWidgets.QPushButton(self.verticalLayoutWidget)
+        self.button_create_img = QtWidgets.QPushButton(self.verticalLayoutWidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.pushButton.sizePolicy().hasHeightForWidth())
-        self.pushButton.setSizePolicy(sizePolicy)
-        self.pushButton.setObjectName("pushButton")
-        self.verticalLayout.addWidget(self.pushButton)
+        sizePolicy.setHeightForWidth(self.button_create_img.sizePolicy().hasHeightForWidth())
+        self.button_create_img.setSizePolicy(sizePolicy)
+        self.button_create_img.setObjectName("pushButton")
+        # this button calls create_image method
+        self.button_create_img.clicked.connect(self.create_image)
+
+        self.verticalLayout.addWidget(self.button_create_img)
         self.button_capture = QtWidgets.QPushButton(self.frame)
         self.button_capture.setGeometry(QtCore.QRect(10, 10, 321, 61))
         font = QtGui.QFont()
@@ -102,8 +105,9 @@ class Ui_MainWindow(object):
         font.setPointSize(24)
         self.button_capture.setFont(font)
         self.button_capture.setObjectName("button_capture")
+        # this button calls do_capture method
         self.button_capture.clicked.connect(self.do_Capture)
-        #connect method
+
 
         self.button_capture_next = QtWidgets.QPushButton(self.frame)
         self.button_capture_next.setGeometry(QtCore.QRect(170, 80, 161, 21))
@@ -134,12 +138,18 @@ class Ui_MainWindow(object):
         self.button_show_roi.setText(_translate("MainWindow", "Show ROI"))
         self.button_all_delete.setText(_translate("MainWindow", "All Delete"))
         self.pushButton_training.setText(_translate("MainWindow", "Training Start"))
-        self.pushButton.setText(_translate("MainWindow", "Create Training Image"))
+        self.button_create_img.setText(_translate("MainWindow", "Create Training Image"))
         self.button_capture.setText(_translate("MainWindow", "Capture"))
         self.button_capture_next.setText(_translate("MainWindow", "Next"))
+
     def do_Capture(self):
         print("image Capture - Start")
         imageProcess.image_capture()
+
+    def create_image(self):
+        #plz write the image path
+        path = ""
+        train.copy_images(path)
 
 
     def getInteger(self):
@@ -147,6 +157,7 @@ class Ui_MainWindow(object):
                                         'Enter your name:')
 
     def make_model(self):
+        #plz write the device path
         path = 'test/testdevice1'
         print("Training device: " + path)
         train.training(path)

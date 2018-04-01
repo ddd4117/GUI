@@ -1,5 +1,5 @@
 import cv2, os, PIL
-from PIL import Image1
+from PIL import Image
 
 def convert(image):
     width, height = image.size

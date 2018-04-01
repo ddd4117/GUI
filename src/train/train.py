@@ -6,9 +6,21 @@ from datetime import timedelta
 import math
 import random
 import numpy as np
-
+import train.extend as extend
 from numpy.random import seed
 from tensorflow import set_random_seed
+
+def copy_images(path):
+    classes = os.listdir(path)
+    if 'model' in classes :
+        classes.remove('model')
+
+    if 'locationInfo.txt' in classes:
+        classes.remove('locationInfo.txt')
+
+    for element in classes:
+        dir_path = path + '/' + element
+        extend.extend(dir_path)
 
 def create_weights(shape):
     return tf.Variable(tf.truncated_normal(shape, stddev=0.05))

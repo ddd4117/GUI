@@ -75,17 +75,18 @@ class Ui_Interface(object):
 
     def go_test_stage(self):
         self.inputbox.do_UI()
-        print("return value : " + self.inputbox.getValue())
+        print("##RETURN  VALUE : " + self.inputbox.getValue())
         self.test_Window.show()
         self.Interace.hide()
-        print("Stage Changed(test stage)")
+        print("##-STAGE CHANGED(Test Stage)")
 
     def go_training_stage(self):
         self.inputbox.do_UI()
-        print("return value : " + self.inputbox.getValue())
+        print("##-RETURN  VALUE : " + self.inputbox.getValue())
+        self.training_interface.dirName = self.inputbox.getValue()
         self.training_Window.show()
         self.Interace.hide()
-        print("Stage Changed(training stage)")
+        print("##-STAGE CHANGED(Training Stage)")
 
     def create_inputBox(self):
         print("return value : " + self.inputbox.getValue())

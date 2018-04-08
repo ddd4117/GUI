@@ -5,12 +5,19 @@
 # Created by: PyQt5 UI code generator 5.10.1
 #
 # WARNING! All changes made in this file will be lost!
+import os
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit
 import train.train as train
 
 import imageProcess
 class Ui_MainWindow(object):
+    def __init__(self):
+        self.absPath = './../res/'
+        self.dirName = 'device'
+        self.side = 'side'
+        self.sideNum = 1
+
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(800, 600)
@@ -112,7 +119,7 @@ class Ui_MainWindow(object):
         self.button_capture_next = QtWidgets.QPushButton(self.frame)
         self.button_capture_next.setGeometry(QtCore.QRect(170, 80, 161, 21))
         self.button_capture_next.setObjectName("button_capture_next")
-        # self.button_capture_next.clicked.connect(self.getInteger)
+        self.button_capture_next.clicked.connect(self.do_NextSide)
 
         self.graphicsView = QtWidgets.QGraphicsView(self.widget)
         self.graphicsView.setGeometry(QtCore.QRect(370, 60, 401, 391))
@@ -142,9 +149,26 @@ class Ui_MainWindow(object):
         self.button_capture.setText(_translate("MainWindow", "Capture"))
         self.button_capture_next.setText(_translate("MainWindow", "Next"))
 
+    def do_NextSide(self):
+        self.sideNum+=1
+        print("##-CLIKED THE NEXT BUTTON" + self.side + str(self.sideNum))
+
     def do_Capture(self):
-        print("image Capture - Start")
-        imageProcess.image_capture()
+        print("##-IMAGE CAPTURE START")
+        path = self.absPath
+
+        #This part is make dir when it doesnt exist
+        if not os.path.isdir(path):
+            os.mkdir(path)
+        path += self.dirName
+        if not os.path.isdir(path):
+            os.mkdir(path)
+        path += '/' + self.side + str(self.sideNum)
+        if not os.path.isdir(path):
+            os.mkdir(path)
+
+        print("##IMAGE PROCESS PATH IS : " + path)
+        imageProcess.image_capture(path)
 
     def create_image(self):
         #plz write the image path

@@ -44,6 +44,8 @@ class App(QWidget):
     def getValue(self):
         if self.okPressed and self.val != '':
             return self.val
+        else:
+            return "NONE"
 
 
 

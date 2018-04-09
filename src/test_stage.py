@@ -26,6 +26,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(800, 600)
+
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.label = QtWidgets.QLabel(self.centralwidget)
@@ -53,10 +54,18 @@ class Ui_MainWindow(object):
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
+
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(24)
+
         sizePolicy.setHeightForWidth(self.button_start_test.sizePolicy().hasHeightForWidth())
         self.button_start_test.setSizePolicy(sizePolicy)
+        self.button_start_test.setFont(font)
         self.button_start_test.setObjectName("button_start_test")
+        self.button_start_test.clicked.connect(self.do_startTest)
         self.verticalLayout.addWidget(self.button_start_test)
+
         self.button_show_result = QtWidgets.QPushButton(self.verticalLayoutWidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
         sizePolicy.setHorizontalStretch(0)
@@ -64,12 +73,13 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.button_show_result.sizePolicy().hasHeightForWidth())
         self.button_show_result.setSizePolicy(sizePolicy)
         self.button_show_result.setObjectName("button_show_result")
+        self.button_show_result.setFont(font)
+        self.button_show_result.clicked.connect(self.show_Result)
+
         self.verticalLayout.addWidget(self.button_show_result)
         self.button_capture = QtWidgets.QPushButton(self.frame)
         self.button_capture.setGeometry(QtCore.QRect(10, 80, 321, 61))
-        font = QtGui.QFont()
-        font.setFamily("Arial")
-        font.setPointSize(24)
+
         self.button_capture.setFont(font)
         self.button_capture.setObjectName("button_capture")
         # connect the image capture method
@@ -92,6 +102,7 @@ class Ui_MainWindow(object):
         self.graphicsView.setGeometry(QtCore.QRect(370, 60, 401, 391))
         self.graphicsView.setObjectName("graphicsView")
         self.graphicsView.setText("Cannot load the image Please Capture button")
+        self.graphicsView.setAlignment(QtCore.Qt.AlignCenter)
 
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
@@ -128,7 +139,16 @@ class Ui_MainWindow(object):
         self.graphicsView.setPixmap(QPixmap.fromImage(img_))
 
     def do_Nextbutton(self):
-        print()
+        print("##-NEXT BUTTON CLICKED")
+
+    def do_startTest(self):
+        print("##-TEST BUTTON CLICKED")
+        ## You write the To-do method here
+
+    def show_Result(self):
+        print("##-SHOW RESULT BUTTON CLICKED")
+        ## You write the To-do method here and Set result
+        self.graphicsView.setText("RESULT DATA")
 
 if __name__ == "__main__":
     import sys

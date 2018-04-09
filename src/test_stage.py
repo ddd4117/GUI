@@ -6,6 +6,7 @@
 #
 # WARNING! All changes made in this file will be lost!
 import cv2
+import numpy
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QImage, QPixmap
 
@@ -19,8 +20,10 @@ class Ui_MainWindow(object):
         self.deviceName = 'device'
         self.sideName = 'side'
         self.sideNum = 1
-        self.sideBox = inputBox.App("Enter the Side number")
-
+        self.sideBox = inputBox.App("Enter the Side name")
+        self.deviceBox = inputBox.App("Enter the Device Name")
+        self.img = numpy.ndarray
+        self.imgview = QImage
 
 
     def setupUi(self, MainWindow):
@@ -127,16 +130,19 @@ class Ui_MainWindow(object):
         self.button_device_number.setText(_translate("MainWindow", "Device #"))
 
     def setDeviceNum(self):
+
+        self.deviceBox.do_UI()
+        self.deviceName = self.deviceBox.getValue()
         self.sideBox.do_UI()
-        sidedir = self.sideName + self.sideBox.getValue()
-        path = self.absPath + self.deviceName + '/' + sidedir
+        self.sideName = self.sideBox.getValue()
+        path = self.absPath + self.deviceName + '/' + self.sideName
         print('##-PATH : ' + path)
 
     def img_capture(self):
         print('##-CAPTURE BUTTON PRESSED')
-        img = imageProcess.test_image_capture()
-        img_ = QImage(img.data, img.shape[1], img.shape[0], QImage.Format_RGB888)
-        self.graphicsView.setPixmap(QPixmap.fromImage(img_))
+        self.img = imageProcess.test_image_capture()
+        self.imgview = QImage(self.img.data, self.img.shape[1], self.img.shape[0], QImage.Format_RGB888)
+        self.graphicsView.setPixmap(QPixmap.fromImage(self.imgview))
 
     def do_Nextbutton(self):
         print("##-NEXT BUTTON CLICKED")

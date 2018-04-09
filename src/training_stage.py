@@ -166,6 +166,7 @@ class Ui_MainWindow(object):
             print('##-PATH CREATE : ' + path)
             os.mkdir(path)
         side = self.side + str(self.sideNum)
+
         if not os.path.isdir(path + '/' + side):
             print('##-PATH CREATE : ' + path + '/' + side)
             os.mkdir(path + '/' + side)

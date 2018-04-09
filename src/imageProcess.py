@@ -1,4 +1,5 @@
 import cv2
+import os
 import numpy as np
 
 import inputBox
@@ -8,7 +9,7 @@ from ipywidgets import Image
 
 def image_capture(dirPath, side):
     print(dirPath)
-    file = open(dirPath + '/' + 'locationInfo.txt', "w+")
+    file = open(dirPath + '/' + 'locationInfo.txt', "a+")
     inputbox = inputBox.App("Enter the Object Name")
     cap = cv2.VideoCapture(0)
     # Read image
@@ -26,11 +27,16 @@ def image_capture(dirPath, side):
 
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 inputbox.do_UI()
-                filename = inputbox.getValue() +".jpg"
-                cv2.imwrite(dirPath + '/' + filename, imCrop)
-                file.write("%s_%s_%s_%s_%s_%s\n" % (x1, y1, x2, y2, side, filename))
+                objName = inputbox.getValue()
+                filename = objName +".jpg"
+                temppath = dirPath + '/' + objName
+                if not os.path.isdir(temppath):
+                    print('##-DIRECTORY CREATE : ' + temppath)
+                    os.mkdir(temppath)
+                cv2.imwrite(temppath + '/' + filename, imCrop)
+                file.write("%s_%s_%s_%s_%s_%s\n" % (x1, y1, x2, y2, side, objName))
                 file.flush()
-                print("##-COMPLETE SAVE FILE : " + inputbox.getValue())
+                print("##-COMPLETE SAVE FILE : " + objName)
                 break
             elif cv2.waitKey(1) & 0xFF == ord('s'):
                 print("##-IMAGE PROCESS COMPELTE")

@@ -7,6 +7,8 @@
 # WARNING! All changes made in this file will be lost!
 import cv2
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtGui import QImage, QPixmap
+
 import imageProcess
 import inputBox
 
@@ -89,11 +91,8 @@ class Ui_MainWindow(object):
         self.graphicsView = QtWidgets.QLabel(self.widget)
         self.graphicsView.setGeometry(QtCore.QRect(370, 60, 401, 391))
         self.graphicsView.setObjectName("graphicsView")
+        self.graphicsView.setText("Cannot load the image Please Capture button")
 
-
-        # self.graphicsView = QtWidgets.QGraphicsView(self.widget)
-        # self.graphicsView.setGeometry(QtCore.QRect(370, 60, 401, 391))
-        # self.graphicsView.setObjectName("graphicsView")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 21))
@@ -119,16 +118,17 @@ class Ui_MainWindow(object):
     def setDeviceNum(self):
         self.sideBox.do_UI()
         sidedir = self.sideName + self.sideBox.getValue()
-        print(sidedir)
         path = self.absPath + self.deviceName + '/' + sidedir
         print('##-PATH : ' + path)
 
     def img_capture(self):
+        print('##-CAPTURE BUTTON PRESSED')
         img = imageProcess.test_image_capture()
+        img_ = QImage(img.data, img.shape[1], img.shape[0], QImage.Format_RGB888)
+        self.graphicsView.setPixmap(QPixmap.fromImage(img_))
 
-        # self.graphicsView.setPixmap(img)
-
-
+    def do_Nextbutton(self):
+        print()
 
 if __name__ == "__main__":
     import sys
@@ -138,4 +138,3 @@ if __name__ == "__main__":
     ui.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())
-

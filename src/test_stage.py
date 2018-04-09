@@ -5,10 +5,22 @@
 # Created by: PyQt5 UI code generator 5.10.1
 #
 # WARNING! All changes made in this file will be lost!
-
+import cv2
 from PyQt5 import QtCore, QtGui, QtWidgets
+import imageProcess
+import inputBox
+
 
 class Ui_MainWindow(object):
+    def __init__(self):
+        self.absPath = './../res/'
+        self.deviceName = 'device'
+        self.sideName = 'side'
+        self.sideNum = 1
+        self.sideBox = inputBox.App("Enter the Side number")
+
+
+
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(800, 600)
@@ -58,6 +70,10 @@ class Ui_MainWindow(object):
         font.setPointSize(24)
         self.button_capture.setFont(font)
         self.button_capture.setObjectName("button_capture")
+        # connect the image capture method
+        self.button_capture.clicked.connect(self.img_capture)
+
+
         self.button_capture_next = QtWidgets.QPushButton(self.frame)
         self.button_capture_next.setGeometry(QtCore.QRect(170, 150, 161, 21))
         self.button_capture_next.setObjectName("button_capture_next")
@@ -68,9 +84,16 @@ class Ui_MainWindow(object):
         font.setPointSize(24)
         self.button_device_number.setFont(font)
         self.button_device_number.setObjectName("button_device_number")
-        self.graphicsView = QtWidgets.QGraphicsView(self.widget)
+        self.button_device_number.clicked.connect(self.setDeviceNum)
+
+        self.graphicsView = QtWidgets.QLabel(self.widget)
         self.graphicsView.setGeometry(QtCore.QRect(370, 60, 401, 391))
         self.graphicsView.setObjectName("graphicsView")
+
+
+        # self.graphicsView = QtWidgets.QGraphicsView(self.widget)
+        # self.graphicsView.setGeometry(QtCore.QRect(370, 60, 401, 391))
+        # self.graphicsView.setObjectName("graphicsView")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 21))
@@ -92,6 +115,19 @@ class Ui_MainWindow(object):
         self.button_capture.setText(_translate("MainWindow", "Capture"))
         self.button_capture_next.setText(_translate("MainWindow", "Next"))
         self.button_device_number.setText(_translate("MainWindow", "Device #"))
+
+    def setDeviceNum(self):
+        self.sideBox.do_UI()
+        sidedir = self.sideName + self.sideBox.getValue()
+        print(sidedir)
+        path = self.absPath + self.deviceName + '/' + sidedir
+        print('##-PATH : ' + path)
+
+    def img_capture(self):
+        img = imageProcess.test_image_capture()
+
+        # self.graphicsView.setPixmap(img)
+
 
 
 if __name__ == "__main__":

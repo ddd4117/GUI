@@ -159,16 +159,19 @@ class Ui_MainWindow(object):
 
         #This part is make dir when it doesnt exist
         if not os.path.isdir(path):
+            print('##-PATH CREATE : ' + path)
             os.mkdir(path)
         path += self.dirName
         if not os.path.isdir(path):
+            print('##-PATH CREATE : ' + path)
             os.mkdir(path)
-        path += '/' + self.side + str(self.sideNum)
-        if not os.path.isdir(path):
-            os.mkdir(path)
+        side = self.side + str(self.sideNum)
+        if not os.path.isdir(path + '/' + side):
+            print('##-PATH CREATE : ' + path + '/' + side)
+            os.mkdir(path + '/' + side)
 
         print("##IMAGE PROCESS PATH IS : " + path)
-        imageProcess.image_capture(path)
+        imageProcess.image_capture(path, side)
 
     def create_image(self):
         #plz write the image path

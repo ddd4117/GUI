@@ -58,7 +58,7 @@ class Ui_Interface(object):
         self.button_statistic_stage = QtWidgets.QPushButton(self.verticalLayoutWidget)
         self.button_statistic_stage.setMinimumSize(QtCore.QSize(1, 50))
         self.button_statistic_stage.setObjectName("button_statistic_stage")
-        self.button_statistic_stage.clicked.connect(self.create_inputBox)
+        # self.button_statistic_stage.clicked.connect(self.create_inputBox)
         self.verticalLayout.addWidget(self.button_statistic_stage)
         Interface.setCentralWidget(self.centralwidget)
 
@@ -76,6 +76,7 @@ class Ui_Interface(object):
     def go_test_stage(self):
         self.inputbox.do_UI()
         print("##RETURN  VALUE : " + self.inputbox.getValue())
+        self.test_interface.deviceName = self.inputbox.getValue()
         self.test_Window.show()
         self.Interace.hide()
         print("##-STAGE CHANGED(Test Stage)")

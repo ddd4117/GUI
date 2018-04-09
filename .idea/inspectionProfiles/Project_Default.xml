@@ -7,6 +7,8 @@
           <option value="training_stage" />
           <option value="test_stage" />
           <option value="imageProcess.CV_WINDOW_NORMAL" />
+          <option value="PyQt5.QtGui.QWidget" />
+          <option value="PyQt5.QtGui.QApplication" />
         </list>
       </option>
     </inspection_tool>

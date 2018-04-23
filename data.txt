@@ -1,0 +1,3 @@
+device1:screw1,screw2,screw3,label1, label2
+device2:screw1,screw2,screw3,label1
+device3:screw1,screw2,screw3,label1

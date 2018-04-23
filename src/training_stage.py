@@ -154,6 +154,7 @@ class Ui_MainWindow(object):
         print("##-CLIKED THE NEXT BUTTON" + self.side + str(self.sideNum))
 
     def do_Capture(self):
+        devicename = self.dirName
         print("##-IMAGE CAPTURE START")
         path = self.absPath
 
@@ -172,7 +173,7 @@ class Ui_MainWindow(object):
             os.mkdir(path + '/' + side)
 
         print("##IMAGE PROCESS PATH IS : " + path)
-        imageProcess.image_capture(path, side)
+        imageProcess.image_capture(path, devicename, side)
 
     def create_image(self):
         #plz write the image path

@@ -1,6 +1,5 @@
 import sys
 from PyQt5 import QtWidgets, QtCore
-import time
 from PyQt5.QtWidgets import *
 import imageProcess
 

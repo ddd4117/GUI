@@ -23,12 +23,12 @@ def readfile():
         dic[left] = temp
     return dic
 
-def image_capture(dirPath, devicename, side):
+def image_capture(dirPath, devicename, side, cameranum):
     dic = readfile()
     print(dic, devicename)
     file = open(dirPath + '/' + 'locationInfo.txt', "a+")
     checkbox = checkBox.MyWindow(dic, 'device2')
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(cameranum)
     # Read image
     ret, img = cap.read()
     fromCenter = False

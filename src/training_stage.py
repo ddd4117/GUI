@@ -17,7 +17,7 @@ class Ui_MainWindow(object):
         self.dirName = 'device'
         self.side = 'side'
         self.sideNum = 1
-
+        self.cameraNum = 0;
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(800, 600)
@@ -150,6 +150,7 @@ class Ui_MainWindow(object):
         self.button_capture_next.setText(_translate("MainWindow", "Next"))
 
     def do_NextSide(self):
+        self.cameraNum = (self.cameraNum + 1) % 2 # CAMERA CHANGE
         self.sideNum+=1
         print("##-CLIKED THE NEXT BUTTON" + self.side + str(self.sideNum))
 
@@ -173,7 +174,7 @@ class Ui_MainWindow(object):
             os.mkdir(path + '/' + side)
 
         print("##IMAGE PROCESS PATH IS : " + path)
-        imageProcess.image_capture(path, devicename, side)
+        imageProcess.image_capture(path, devicename, side, self.cameraNum)
 
     def create_image(self):
         #plz write the image path

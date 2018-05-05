@@ -15,7 +15,7 @@ import inputBox
 
 
 class Ui_MainWindow(object):
-    def __init__(self):
+    def __init__(self, _mainUI = None):
         self.absPath = './../res/'
         self.deviceName = 'device'
         self.sideName = 'side'
@@ -24,13 +24,14 @@ class Ui_MainWindow(object):
         self.deviceBox = inputBox.App("Enter the Device Name")
         self.img = numpy.ndarray
         self.imgview = QImage
+        self.mainUI = _mainUI
 
+    def setupUi(self, _mainwindow):
+        self.MainWindow = _mainwindow
+        self.MainWindow.setObjectName("MainWindow")
+        self.MainWindow.resize(800, 600)
 
-    def setupUi(self, MainWindow):
-        MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(800, 600)
-
-        self.centralwidget = QtWidgets.QWidget(MainWindow)
+        self.centralwidget = QtWidgets.QWidget(self.MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.label = QtWidgets.QLabel(self.centralwidget)
         self.label.setGeometry(QtCore.QRect(0, 10, 781, 41))
@@ -39,6 +40,12 @@ class Ui_MainWindow(object):
         self.label.setFont(font)
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         self.label.setObjectName("label")
+
+        # Home Button
+        self.home = QtWidgets.QPushButton(self.centralwidget)
+        self.home.setGeometry(QtCore.QRect(730, 10, 50, 50))
+        self.home.clicked.connect(self.do_Home)
+
         self.widget = QtWidgets.QWidget(self.centralwidget)
         self.widget.setGeometry(QtCore.QRect(10, 60, 781, 491))
         self.widget.setObjectName("widget")
@@ -92,6 +99,7 @@ class Ui_MainWindow(object):
         self.button_capture_next = QtWidgets.QPushButton(self.frame)
         self.button_capture_next.setGeometry(QtCore.QRect(170, 150, 161, 21))
         self.button_capture_next.setObjectName("button_capture_next")
+        self.button_capture_next.clicked.connect(self.do_Nextbutton)
         self.button_device_number = QtWidgets.QPushButton(self.frame)
         self.button_device_number.setGeometry(QtCore.QRect(10, 10, 321, 61))
         font = QtGui.QFont()
@@ -107,27 +115,33 @@ class Ui_MainWindow(object):
         self.graphicsView.setText("Cannot load the image Please Capture button")
         self.graphicsView.setAlignment(QtCore.Qt.AlignCenter)
 
-        MainWindow.setCentralWidget(self.centralwidget)
-        self.menubar = QtWidgets.QMenuBar(MainWindow)
+        self.MainWindow.setCentralWidget(self.centralwidget)
+        self.menubar = QtWidgets.QMenuBar(self.MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 21))
         self.menubar.setObjectName("menubar")
-        MainWindow.setMenuBar(self.menubar)
-        self.statusbar = QtWidgets.QStatusBar(MainWindow)
+        self.MainWindow.setMenuBar(self.menubar)
+        self.statusbar = QtWidgets.QStatusBar(self.MainWindow)
         self.statusbar.setObjectName("statusbar")
-        MainWindow.setStatusBar(self.statusbar)
+        self.MainWindow.setStatusBar(self.statusbar)
 
-        self.retranslateUi(MainWindow)
-        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        self.retranslateUi()
+        QtCore.QMetaObject.connectSlotsByName(self.MainWindow)
 
-    def retranslateUi(self, MainWindow):
+    def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        self.MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.label.setText(_translate("MainWindow", "Test Stage"))
         self.button_start_test.setText(_translate("MainWindow", "Start Test"))
         self.button_show_result.setText(_translate("MainWindow", "Show Result"))
         self.button_capture.setText(_translate("MainWindow", "Capture"))
         self.button_capture_next.setText(_translate("MainWindow", "Next"))
         self.button_device_number.setText(_translate("MainWindow", "Device #"))
+        self.home.setText(_translate("MainWindow", "Home"))
+
+    def do_Home(self):
+        print("##-Return Home Stage")
+        self.mainUI.show()
+        self.MainWindow.close()
 
     def setDeviceNum(self):
 

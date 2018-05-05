@@ -13,26 +13,16 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 
 class Ui_Interface(object):
-    def __init__(self):
-        #set up the next stage
-        self.test_Window = QtWidgets.QMainWindow()
-        self.test_interface =  test_stage.Ui_MainWindow()
-        self.test_interface.setupUi(self.test_Window)
-
-        self.training_Window = QtWidgets.QMainWindow()
-        self.training_interface = training_stage.Ui_MainWindow()
-        self.training_interface.setupUi(self.training_Window)
-
-        self.inputbox = inputBox.App("Enter the device name")
     def setupUi(self, Interface):
         self.Interace = Interface
-        Interface.setObjectName("Interface")
-        Interface.resize(800, 600)
-        self.centralwidget = QtWidgets.QWidget(Interface)
+        self.Interace.setObjectName("Interface")
+        self.Interace.resize(800, 600)
+        self.centralwidget = QtWidgets.QWidget(self.Interace)
         self.centralwidget.setMinimumSize(QtCore.QSize(200, 200))
         self.centralwidget.setObjectName("centralwidget")
 
         self.verticalLayoutWidget = QtWidgets.QWidget(self.centralwidget)
+
         self.verticalLayoutWidget.setGeometry(QtCore.QRect(30, 10, 741, 571))
         self.verticalLayoutWidget.setObjectName("verticalLayoutWidget")
 
@@ -60,36 +50,51 @@ class Ui_Interface(object):
         self.button_statistic_stage.setObjectName("button_statistic_stage")
         # self.button_statistic_stage.clicked.connect(self.create_inputBox)
         self.verticalLayout.addWidget(self.button_statistic_stage)
-        Interface.setCentralWidget(self.centralwidget)
+        self.Interace.setCentralWidget(self.centralwidget)
 
-        self.retranslateUi(Interface)
+        self.retranslateUi()
 
-        QtCore.QMetaObject.connectSlotsByName(Interface)
+        QtCore.QMetaObject.connectSlotsByName(self.Interace)
 
-    def retranslateUi(self, Interface):
+    def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
-        Interface.setWindowTitle(_translate("Interface", "MainWindow"))
+        self.Interace.setWindowTitle(_translate("Interface", "MainWindow"))
         self.button_training_stage.setText(_translate("Interface", "Training Stage"))
         self.button_test_stage.setText(_translate("Interface", "Test Stage"))
         self.button_statistic_stage.setText(_translate("Interface", "Statistic & Result"))
 
     def go_test_stage(self):
-        self.inputbox.do_UI()
-        print("##RETURN  VALUE : " + self.inputbox.getValue())
-        self.test_interface.deviceName = self.inputbox.getValue()
+        inputbox = inputBox.App("Enter the device name")
+        inputbox.do_UI()
+        print("##RETURN  VALUE : " + inputbox.getValue())
+        self.test_Window = QtWidgets.QMainWindow()
+        self.test_interface = test_stage.Ui_MainWindow(self.Interace)
+        self.test_interface.setupUi(self.test_Window)
+
+        self.test_interface.deviceName = inputbox.getValue()
         self.test_Window.show()
-        self.Interace.hide()
+        self.Interace.close()
+        inputbox.close()
         print("##-STAGE CHANGED(Test Stage)")
 
     def go_training_stage(self):
-        self.inputbox.do_UI()
-        print("##-RETURN  VALUE : " + self.inputbox.getValue())
-        self.training_interface.dirName = self.inputbox.getValue()
+        inputbox = inputBox.App("Enter the device name")
+        inputbox.do_UI()
+        print("##-RETURN  VALUE : " + inputbox.getValue())
+        self.training_Window = QtWidgets.QMainWindow()
+        self.training_interface = training_stage.Ui_MainWindow(self.Interace)
+        self.training_interface.setupUi(self.training_Window)
+
+
+        self.training_interface.dirName = inputbox.getValue()
         self.training_Window.show()
-        self.Interace.hide()
+        self.Interace.close()
+        inputbox.close()
         print("##-STAGE CHANGED(Training Stage)")
 
     def create_inputBox(self):
+        inputbox = inputBox.App("Enter the device name")
+        inputbox.do_UI()
         print("return value : " + self.inputbox.getValue())
         #print(self.inputbox.text)
 
@@ -100,7 +105,6 @@ def main():
     ui.setupUi(Interface)
     Interface.show()
     sys.exit(app.exec_())
-
 if __name__ == "__main__":
     main()
 

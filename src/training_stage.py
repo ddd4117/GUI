@@ -7,29 +7,40 @@
 # WARNING! All changes made in this file will be lost!
 import os
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtCore import QState
 from PyQt5.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit
 import train.train as train
-
 import imageProcess
 class Ui_MainWindow(object):
-    def __init__(self):
+    def __init__(self, _mainUI = None):
         self.absPath = './../res/'
         self.dirName = 'device'
         self.side = 'side'
         self.sideNum = 1
-        self.cameraNum = 0;
-    def setupUi(self, MainWindow):
-        MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(800, 600)
-        self.centralwidget = QtWidgets.QWidget(MainWindow)
+        self.cameraNum = 0
+        self.mainUI = _mainUI
+
+    def setupUi(self, _MainWindow):
+        self.MainWindow =_MainWindow
+        self.MainWindow.setObjectName("MainWindow")
+        self.MainWindow.resize(800, 600)
+        self.centralwidget = QtWidgets.QWidget(self.MainWindow)
         self.centralwidget.setObjectName("centralwidget")
+        #Title Label
         self.label = QtWidgets.QLabel(self.centralwidget)
         self.label.setGeometry(QtCore.QRect(10, 10, 781, 41))
+
         font = QtGui.QFont()
         font.setPointSize(29)
         self.label.setFont(font)
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         self.label.setObjectName("label")
+        #Home Button
+        self.home = QtWidgets.QPushButton(self.centralwidget)
+        self.home.setGeometry(QtCore.QRect(730,10,50,50))
+        self.home.clicked.connect(self.do_Home)
+
+
         self.widget = QtWidgets.QWidget(self.centralwidget)
         self.widget.setGeometry(QtCore.QRect(10, 70, 781, 491))
         self.widget.setObjectName("widget")
@@ -83,6 +94,19 @@ class Ui_MainWindow(object):
         self.verticalLayout = QtWidgets.QVBoxLayout(self.verticalLayoutWidget)
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout.setObjectName("verticalLayout")
+        #Create Image
+        self.button_create_img = QtWidgets.QPushButton(self.verticalLayoutWidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.button_create_img.sizePolicy().hasHeightForWidth())
+        self.button_create_img.setSizePolicy(sizePolicy)
+        self.button_create_img.setObjectName("pushButton")
+        # this button calls create_image method
+        self.button_create_img.clicked.connect(self.create_image)
+        self.verticalLayout.addWidget(self.button_create_img)
+
+        # Training Button
         self.pushButton_training = QtWidgets.QPushButton(self.verticalLayoutWidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
         sizePolicy.setHorizontalStretch(0)
@@ -94,51 +118,49 @@ class Ui_MainWindow(object):
         #this button calls make_mode method
         self.pushButton_training.clicked.connect(self.make_model)
 
-        self.button_create_img = QtWidgets.QPushButton(self.verticalLayoutWidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.button_create_img.sizePolicy().hasHeightForWidth())
-        self.button_create_img.setSizePolicy(sizePolicy)
-        self.button_create_img.setObjectName("pushButton")
-        # this button calls create_image method
-        self.button_create_img.clicked.connect(self.create_image)
 
-        self.verticalLayout.addWidget(self.button_create_img)
-        self.button_capture = QtWidgets.QPushButton(self.frame)
-        self.button_capture.setGeometry(QtCore.QRect(10, 10, 321, 61))
+        self.incorrect_capture = QtWidgets.QPushButton(self.frame)
+        self.incorrect_capture.setGeometry(QtCore.QRect(170, 10, 160, 61))
+
+        self.correct_capture = QtWidgets.QPushButton(self.frame)
+        self.correct_capture.setGeometry(QtCore.QRect(10, 10, 155, 61))
         font = QtGui.QFont()
         font.setFamily("Arial")
-        font.setPointSize(24)
-        self.button_capture.setFont(font)
-        self.button_capture.setObjectName("button_capture")
+        font.setPointSize(15)
+        self.correct_capture.setFont(font)
+        self.correct_capture.setObjectName("correct_capture")
+        self.incorrect_capture.setFont(font)
+        self.incorrect_capture.setObjectName("Incorrect Capture")
+        self.incorrect_capture.clicked.connect(self.do_InCorrect)
         # this button calls do_capture method
-        self.button_capture.clicked.connect(self.do_Capture)
+        self.correct_capture.clicked.connect(self.do_Capture)
 
 
         self.button_capture_next = QtWidgets.QPushButton(self.frame)
         self.button_capture_next.setGeometry(QtCore.QRect(170, 80, 161, 21))
         self.button_capture_next.setObjectName("button_capture_next")
+
+
         self.button_capture_next.clicked.connect(self.do_NextSide)
 
         self.graphicsView = QtWidgets.QGraphicsView(self.widget)
         self.graphicsView.setGeometry(QtCore.QRect(370, 60, 401, 391))
         self.graphicsView.setObjectName("graphicsView")
-        MainWindow.setCentralWidget(self.centralwidget)
-        self.menubar = QtWidgets.QMenuBar(MainWindow)
+        self.MainWindow.setCentralWidget(self.centralwidget)
+        self.menubar = QtWidgets.QMenuBar(self.MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 21))
         self.menubar.setObjectName("menubar")
-        MainWindow.setMenuBar(self.menubar)
-        self.statusbar = QtWidgets.QStatusBar(MainWindow)
+        self.MainWindow.setMenuBar(self.menubar)
+        self.statusbar = QtWidgets.QStatusBar(self.MainWindow)
         self.statusbar.setObjectName("statusbar")
-        MainWindow.setStatusBar(self.statusbar)
+        self.MainWindow.setStatusBar(self.statusbar)
 
-        self.retranslateUi(MainWindow)
-        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        self.retranslateUi()
+        QtCore.QMetaObject.connectSlotsByName(self.MainWindow)
 
-    def retranslateUi(self, MainWindow):
+    def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        self.MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.label.setText(_translate("MainWindow", "Training Stage"))
         self.button_start_roi.setText(_translate("MainWindow", "Start ROI"))
         self.button_delete.setText(_translate("MainWindow", "Delete"))
@@ -146,13 +168,24 @@ class Ui_MainWindow(object):
         self.button_all_delete.setText(_translate("MainWindow", "All Delete"))
         self.pushButton_training.setText(_translate("MainWindow", "Training Start"))
         self.button_create_img.setText(_translate("MainWindow", "Create Training Image"))
-        self.button_capture.setText(_translate("MainWindow", "Capture"))
+        self.correct_capture.setText(_translate("MainWindow", "Correct\nCapture"))
+        self.incorrect_capture.setText(_translate("MainWindow", "Incorrect\nCapture"))
         self.button_capture_next.setText(_translate("MainWindow", "Next"))
+        self.home.setText(_translate("MainWindow", "Home"))
+
+    def do_Home(self):
+        print("##-Return Home Stage")
+        self.mainUI.show()
+        self.MainWindow.close()
+
+    def do_InCorrect(self):
+        #write that you want to do
+        print("##-INCORRECT CAPTURE START")
 
     def do_NextSide(self):
         self.cameraNum = (self.cameraNum + 1) % 2 # CAMERA CHANGE
         self.sideNum+=1
-        print("##-CLIKED THE NEXT BUTTON" + self.side + str(self.sideNum))
+        print("##-CLIKED THE NEXT BUTTON :" + self.side + str(self.sideNum))
 
     def do_Capture(self):
         devicename = self.dirName

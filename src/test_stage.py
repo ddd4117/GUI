@@ -8,7 +8,8 @@
 import cv2
 import numpy
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtGui import QImage, QPixmap
+from PyQt5.QtGui import QImage, QPixmap, QFont
+from PyQt5.QtCore import Qt
 
 import imageProcess
 import inputBox
@@ -27,17 +28,29 @@ class Ui_MainWindow(object):
         self.mainUI = _mainUI
 
     def setupUi(self, _mainwindow):
+        css = """QPushButton { background-color: white;
+                        border-style: outset;
+                        border-width: 2px;
+                        border-radius: 15px;    
+                        border-color: black;
+                        padding: 4px;
+                    }"""
+        font = QFont('D2Coding', 25, QFont.Light)
+        font2 = QFont('D2Coding', 12, QFont.Light)
         self.MainWindow = _mainwindow
         self.MainWindow.setObjectName("MainWindow")
         self.MainWindow.resize(800, 600)
-
+        pal = self.MainWindow.palette()
+        pal.setColor(self.MainWindow.backgroundRole(), Qt.white)
+        self.MainWindow.setPalette(pal)
         self.centralwidget = QtWidgets.QWidget(self.MainWindow)
         self.centralwidget.setObjectName("centralwidget")
+
+        font3 = QFont('D2Coding', 25, QFont.Light)
         self.label = QtWidgets.QLabel(self.centralwidget)
         self.label.setGeometry(QtCore.QRect(0, 10, 781, 41))
-        font = QtGui.QFont()
-        font.setPointSize(29)
-        self.label.setFont(font)
+
+        self.label.setFont(font3)
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         self.label.setObjectName("label")
 
@@ -45,7 +58,8 @@ class Ui_MainWindow(object):
         self.home = QtWidgets.QPushButton(self.centralwidget)
         self.home.setGeometry(QtCore.QRect(730, 10, 50, 50))
         self.home.clicked.connect(self.do_Home)
-
+        self.home.setStyleSheet(css)
+        self.home.setFont(font2)
         self.widget = QtWidgets.QWidget(self.centralwidget)
         self.widget.setGeometry(QtCore.QRect(10, 60, 781, 491))
         self.widget.setObjectName("widget")
@@ -65,15 +79,15 @@ class Ui_MainWindow(object):
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
 
-        font = QtGui.QFont()
-        font.setFamily("Arial")
-        font.setPointSize(24)
-
         sizePolicy.setHeightForWidth(self.button_start_test.sizePolicy().hasHeightForWidth())
+
+        #Start Button
         self.button_start_test.setSizePolicy(sizePolicy)
         self.button_start_test.setFont(font)
         self.button_start_test.setObjectName("button_start_test")
         self.button_start_test.clicked.connect(self.do_startTest)
+        self.button_start_test.setStyleSheet(css)
+        self.button_start_test.setFont(font)
         self.verticalLayout.addWidget(self.button_start_test)
 
         self.button_show_result = QtWidgets.QPushButton(self.verticalLayoutWidget)
@@ -81,33 +95,38 @@ class Ui_MainWindow(object):
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.button_show_result.sizePolicy().hasHeightForWidth())
+        #Show Button
         self.button_show_result.setSizePolicy(sizePolicy)
         self.button_show_result.setObjectName("button_show_result")
         self.button_show_result.setFont(font)
+        self.button_show_result.setStyleSheet(css)
         self.button_show_result.clicked.connect(self.show_Result)
-
         self.verticalLayout.addWidget(self.button_show_result)
+
+        #Capture button
         self.button_capture = QtWidgets.QPushButton(self.frame)
         self.button_capture.setGeometry(QtCore.QRect(10, 80, 321, 61))
-
         self.button_capture.setFont(font)
         self.button_capture.setObjectName("button_capture")
+        self.button_capture.setStyleSheet(css)
         # connect the image capture method
         self.button_capture.clicked.connect(self.img_capture)
 
-
+        #Next Button
         self.button_capture_next = QtWidgets.QPushButton(self.frame)
-        self.button_capture_next.setGeometry(QtCore.QRect(170, 150, 161, 21))
+        self.button_capture_next.setGeometry(QtCore.QRect(170, 150, 161, 30))
         self.button_capture_next.setObjectName("button_capture_next")
         self.button_capture_next.clicked.connect(self.do_Nextbutton)
+        self.button_capture_next.setFont(font2)
+        self.button_capture_next.setStyleSheet(css)
+
+        #Set Device Number
         self.button_device_number = QtWidgets.QPushButton(self.frame)
         self.button_device_number.setGeometry(QtCore.QRect(10, 10, 321, 61))
-        font = QtGui.QFont()
-        font.setFamily("Arial")
-        font.setPointSize(24)
-        self.button_device_number.setFont(font)
         self.button_device_number.setObjectName("button_device_number")
         self.button_device_number.clicked.connect(self.setDeviceNum)
+        self.button_device_number.setStyleSheet(css)
+        self.button_device_number.setFont(font)
 
         self.graphicsView = QtWidgets.QLabel(self.widget)
         self.graphicsView.setGeometry(QtCore.QRect(370, 60, 401, 391))

@@ -50,7 +50,8 @@ class Ui_Interface(object):
                 border-radius: 15px;    
                 border-color: black;
                 padding: 4px;
-            }"""
+            }
+            """
         self.button_training_stage = QtWidgets.QPushButton(self.verticalLayoutWidget)
         self.button_training_stage.setEnabled(True)
         self.button_training_stage.setMinimumSize(QtCore.QSize(1, 100))
@@ -115,6 +116,7 @@ class Ui_Interface(object):
         self.training_interface.setupUi(self.training_Window)
 
         self.training_interface.dirName = inputbox.getValue()
+        self.training_interface.setState()
         self.training_Window.show()
         self.interface.close()
         inputbox.close()

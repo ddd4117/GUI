@@ -12,8 +12,9 @@ from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit
 import train.train as train
 import imageProcess
+import subprocess
 from PyQt5.QtCore import Qt
-
+import pathlib
 class Ui_MainWindow(object):
     def __init__(self, _mainUI = None):
         self.absPath = './../res/'
@@ -22,7 +23,6 @@ class Ui_MainWindow(object):
         self.sideNum = 1
         self.cameraNum = 0
         self.mainUI = _mainUI
-
     def setupUi(self, _MainWindow):
         css = """QPushButton { background-color: white;
                                 border-style: outset;
@@ -46,11 +46,16 @@ class Ui_MainWindow(object):
         #Title Label
         font3= QFont('D2Coding', 25, QFont.Light)
         self.label = QtWidgets.QLabel(self.centralwidget)
-        self.label.setGeometry(QtCore.QRect(10, 10, 781, 41))
-        self.label.setFont(font)
+        self.label.setGeometry(QtCore.QRect(10, 30, 781, 41))
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         self.label.setObjectName("label")
         self.label.setFont(font3)
+
+        self.currentState = QtWidgets.QLabel(self.centralwidget)
+        self.currentState.setGeometry(QtCore.QRect(10,71,781,21))
+        self.currentState.setFont(font2)
+        self.currentState.setAlignment(QtCore.Qt.AlignCenter)
+        self.currentState.setObjectName('currentState')
 
         #Home Button
         self.home = QtWidgets.QPushButton(self.centralwidget)
@@ -68,48 +73,48 @@ class Ui_MainWindow(object):
         self.frame.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame.setObjectName("frame")
         self.gridLayoutWidget = QtWidgets.QWidget(self.frame)
-        self.gridLayoutWidget.setGeometry(QtCore.QRect(10, 140, 321, 101))
+        self.gridLayoutWidget.setGeometry(QtCore.QRect(10, 190, 321, 61))
         self.gridLayoutWidget.setObjectName("gridLayoutWidget")
         self.gridLayout = QtWidgets.QGridLayout(self.gridLayoutWidget)
         self.gridLayout.setContentsMargins(0, 0, 0, 0)
         self.gridLayout.setVerticalSpacing(5)
         self.gridLayout.setObjectName("gridLayout")
         #ROI Start Button
-        self.button_start_roi = QtWidgets.QPushButton(self.gridLayoutWidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.button_start_roi.sizePolicy().hasHeightForWidth())
-        self.button_start_roi.setSizePolicy(sizePolicy)
-        self.button_start_roi.setObjectName("button_start_roi")
-        self.button_start_roi.setFont(font)
-        self.button_start_roi.setStyleSheet(css)
+        # self.button_start_roi = QtWidgets.QPushButton(self.gridLayoutWidget)
+        # sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        # sizePolicy.setHorizontalStretch(0)
+        # sizePolicy.setVerticalStretch(0)
+        # sizePolicy.setHeightForWidth(self.button_start_roi.sizePolicy().hasHeightForWidth())
+        # self.button_start_roi.setSizePolicy(sizePolicy)
+        # self.button_start_roi.setObjectName("button_start_roi")
+        # self.button_start_roi.setFont(font)
+        # self.button_start_roi.setStyleSheet(css)
+        #
+        # self.gridLayout.addWidget(self.button_start_roi, 0, 0, 1, 1)
 
-        self.gridLayout.addWidget(self.button_start_roi, 0, 0, 1, 1)
+        # #Delete Button
+        # self.button_delete = QtWidgets.QPushButton(self.gridLayoutWidget)
+        # sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        # sizePolicy.setHorizontalStretch(0)
+        # sizePolicy.setVerticalStretch(0)
+        # sizePolicy.setHeightForWidth(self.button_delete.sizePolicy().hasHeightForWidth())
+        # self.button_delete.setSizePolicy(sizePolicy)
+        # self.button_delete.setObjectName("button_delete")
+        # self.button_delete.setStyleSheet(css)
+        # self.button_delete.setFont(font)
 
-        #Delete Button
-        self.button_delete = QtWidgets.QPushButton(self.gridLayoutWidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.button_delete.sizePolicy().hasHeightForWidth())
-        self.button_delete.setSizePolicy(sizePolicy)
-        self.button_delete.setObjectName("button_delete")
-        self.button_delete.setStyleSheet(css)
-        self.button_delete.setFont(font)
-
-        self.gridLayout.addWidget(self.button_delete, 0, 1, 1, 1)
+        # self.gridLayout.addWidget(self.button_delete, 0, 1, 1, 1)
         #Show ROI Button
-        self.button_show_roi = QtWidgets.QPushButton(self.gridLayoutWidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.button_show_roi.sizePolicy().hasHeightForWidth())
-        self.button_show_roi.setSizePolicy(sizePolicy)
-        self.button_show_roi.setObjectName("button_show_roi")
-        self.button_show_roi.setFont(font)
-        self.button_show_roi.setStyleSheet(css)
-        self.gridLayout.addWidget(self.button_show_roi, 1, 0, 1, 1)
+        # self.button_show_roi = QtWidgets.QPushButton(self.gridLayoutWidget)
+        # sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        # sizePolicy.setHorizontalStretch(0)
+        # sizePolicy.setVerticalStretch(0)
+        # sizePolicy.setHeightForWidth(self.button_show_roi.sizePolicy().hasHeightForWidth())
+        # self.button_show_roi.setSizePolicy(sizePolicy)
+        # self.button_show_roi.setObjectName("button_show_roi")
+        # self.button_show_roi.setFont(font)
+        # self.button_show_roi.setStyleSheet(css)
+        # self.gridLayout.addWidget(self.button_show_roi, 1, 0, 1, 1)
 
         #Delete All button
         self.button_all_delete = QtWidgets.QPushButton(self.gridLayoutWidget)
@@ -119,9 +124,9 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.button_all_delete.sizePolicy().hasHeightForWidth())
         self.button_all_delete.setSizePolicy(sizePolicy)
         self.button_all_delete.setObjectName("button_all_delete")
-
         self.button_all_delete.setStyleSheet(css)
         self.button_all_delete.setFont(font)
+        self.button_all_delete.clicked.connect(self.do_AllDelete)
 
 
         self.gridLayout.addWidget(self.button_all_delete, 1, 1, 1, 1)
@@ -161,13 +166,13 @@ class Ui_MainWindow(object):
 
         #Incorrect Capture Button
         self.incorrect_capture = QtWidgets.QPushButton(self.frame)
-        self.incorrect_capture.setGeometry(QtCore.QRect(170, 10, 160, 61))
+        self.incorrect_capture.setGeometry(QtCore.QRect(170, 10, 160, 80))
         self.incorrect_capture.setFont(font)
         self.incorrect_capture.setStyleSheet(css)
 
         #Correct Capture Button
         self.correct_capture = QtWidgets.QPushButton(self.frame)
-        self.correct_capture.setGeometry(QtCore.QRect(10, 10, 155, 61))
+        self.correct_capture.setGeometry(QtCore.QRect(10, 10, 155, 80))
         self.correct_capture.setFont(font)
         self.correct_capture.setStyleSheet(css)
         self.correct_capture.setFont(font)
@@ -180,7 +185,7 @@ class Ui_MainWindow(object):
 
         #Next Button
         self.button_capture_next = QtWidgets.QPushButton(self.frame)
-        self.button_capture_next.setGeometry(QtCore.QRect(170, 80, 161, 30))
+        self.button_capture_next.setGeometry(QtCore.QRect(170, 100, 161, 30))
         self.button_capture_next.setObjectName("button_capture_next")
         self.button_capture_next.setStyleSheet(css)
         self.button_capture_next.setFont(font2)
@@ -206,9 +211,9 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         self.MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.label.setText(_translate("MainWindow", "Training Stage"))
-        self.button_start_roi.setText(_translate("MainWindow", "Start ROI"))
-        self.button_delete.setText(_translate("MainWindow", "Delete"))
-        self.button_show_roi.setText(_translate("MainWindow", "Show ROI"))
+        # self.button_start_roi.setText(_translate("MainWindow", "Start ROI"))
+        # self.button_delete.setText(_translate("MainWindow", "Delete"))
+        # self.button_show_roi.setText(_translate("MainWindow", "Show ROI"))
         self.button_all_delete.setText(_translate("MainWindow", "All Delete"))
         self.pushButton_training.setText(_translate("MainWindow", "Training Start"))
         self.button_create_img.setText(_translate("MainWindow", "Create Training Image"))
@@ -216,6 +221,19 @@ class Ui_MainWindow(object):
         self.incorrect_capture.setText(_translate("MainWindow", "Incorrect\nCapture"))
         self.button_capture_next.setText(_translate("MainWindow", "Next"))
         self.home.setText(_translate("MainWindow", "Home"))
+    def setState(self, _side = 'side1'):
+        self.currentState.setText(QtCore.QCoreApplication.translate("MainWindow", self.dirName + " " + _side))
+    def do_AllDelete(self):
+        deletePath = self.absPath + self.dirName
+        delete_folder(pathlib.Path(deletePath))
+        # if os.path.isdir(deletePath):
+        #     print(deletePath)
+        #     proc = subprocess.Popen(['rmdir', '/s', '/q', deletePath],
+        #                         stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        #     out, err = proc.communicate()
+        print("##-DELETE ALL")
+
+
 
     def do_Home(self):
         print("##-Return Home Stage")
@@ -229,7 +247,9 @@ class Ui_MainWindow(object):
     def do_NextSide(self):
         self.cameraNum = (self.cameraNum + 1) % 2 # CAMERA CHANGE
         self.sideNum+=1
-        print("##-CLIKED THE NEXT BUTTON :" + self.side + str(self.sideNum))
+        side = self.side + str(self.sideNum)
+        self.setState(side)
+        print("##-CLIKED THE NEXT BUTTON :" + side)
 
     def do_Capture(self):
         devicename = self.dirName
@@ -268,6 +288,14 @@ class Ui_MainWindow(object):
         path = 'test/testdevice1'
         print("Training device: " + path)
         train.training(path)
+
+def delete_folder(pth) :
+    for sub in pth.iterdir() :
+        if sub.is_dir() :
+            delete_folder(sub)
+        else :
+            sub.unlink()
+    pth.rmdir()
 
 if __name__ == "__main__":
     import sys

@@ -96,23 +96,23 @@ def test_image_capture():
     ret, img = cap.read()
     return img
 
-# def checkclicked(checkbox, dirPath, imCrop, x1, x2, y1, y2, file, side):
-#     while True:
-#         if(checkbox.flag):
-#             break
-#     print(checkbox.getValue())
-#     objName = checkbox.getValue()
-#     filename = objName + ".jpg"
-#     temppath = dirPath + '/' + objName
-#     if not os.path.isdir(temppath):
-#         print('##-DIRECTORY CREATE : ' + temppath)
-#         os.mkdir(temppath)
-#     cv2.imwrite(temppath + '/' + filename, imCrop)
-#     img_path_list.append(temppath+'/'+filename)
-#     selected_img.append([x1,y1,x2,y2])
-#     file.write("%s_%s_%s_%s_%s_%s\n" % (x1, y1, x2, y2, side, objName))
-#     file.flush()
-#     print("##-COMPLETE SAVE FILE : " + objName)
+def checkclicked(checkbox, dirPath, imCrop, x1, x2, y1, y2, file, side):
+    while True:
+        if(checkbox.flag):
+            break
+    print(checkbox.getValue())
+    objName = checkbox.getValue()
+    filename = objName + ".jpg"
+    temppath = dirPath + '/' + objName
+    if not os.path.isdir(temppath):
+        print('##-DIRECTORY CREATE : ' + temppath)
+        os.mkdir(temppath)
+    cv2.imwrite(temppath + '/' + filename, imCrop)
+    img_path_list.append(temppath+'/'+filename)
+    selected_img.append([x1,y1,x2,y2])
+    file.write("%s_%s_%s_%s_%s_%s\n" % (x1, y1, x2, y2, side, objName))
+    file.flush()
+    print("##-COMPLETE SAVE FILE : " + objName)
 
 if __name__ == '__main__':
     image_capture()

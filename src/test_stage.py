@@ -11,6 +11,12 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QImage, QPixmap, QFont
 from PyQt5.QtCore import Qt
 
+import inputBox
+import config
+import os
+import train.ImportGraph as ImportGraph
+import train.ImportGraph as ImportGraph
+import train.roiUnit as roiUnit
 import imageProcess
 import inputBox
 
@@ -163,7 +169,6 @@ class Ui_MainWindow(object):
         self.MainWindow.close()
 
     def setDeviceNum(self):
-
         self.deviceBox.do_UI()
         self.deviceName = self.deviceBox.getValue()
         self.sideBox.do_UI()
@@ -173,22 +178,103 @@ class Ui_MainWindow(object):
 
     def img_capture(self):
         print('##-CAPTURE BUTTON PRESSED')
-        self.img = imageProcess.test_image_capture()
+        predictPath = self.absPath + self.deviceName + '/predict'; config.makeDir(predictPath)
+        pImagePath= self.absPath + self.deviceName + '/predict/images'; config.makeDir(pImagePath)
+
+        side = self.sideName + str(self.sideNum)
+        self.img = imageProcess.test_image_capture(self.ROI[side], pImagePath, self.cameraNum)
+        cv2.imwrite(predictPath + '/' + side +'.jpg', self.img)
         self.imgview = QImage(self.img.data, self.img.shape[1], self.img.shape[0], QImage.Format_RGB888)
         self.graphicsView.setPixmap(QPixmap.fromImage(self.imgview))
 
     def do_Nextbutton(self):
+        self.sideNum += 1
+        self.camera = (self.camera + 1) % config.CAMERA_NUMBER
         print("##-NEXT BUTTON CLICKED")
 
     def do_startTest(self):
         print("##-TEST BUTTON CLICKED")
         ## You write the To-do method here
+        path = self.absPath + self.deviceName
+        img_list = os.listdir(path + '/predict')
+        classes = os.listdir(path + '/t_images')
+
+        incor_class = {}
+        for label in classes :
+            if label.split('_')[-1] == 'incor' :
+                value = label.split('_')[1]
+                if value in incor_class : incor_class[value].append(label)
+                else : incor_class[value] = [label]
+
+        self.smallImages = {}
+        model = ImportGraph.ImportGraph(path, len(classes))
+        for image in img_list :
+            if not os.path.isdir(path + '/predict/' + image) :
+                self.smallImages[image.split('.')[0]] = cv2.imread(path + '/predict/' + image)
+
+        img_list = os.listdir(path + '/predict/images')
+        for image in img_list :
+            image_path = path + '/predict/images/' + image
+            print('test:', image_path)
+
+            result = model.predict(image_path)
+            print('Match rates:', result[0])
+            isSuit = getResult(image, incor_class, classes, result)
+
+            print('result:', isSuit, end='\n')
+
+            start, end, side = self.getArea(image)
+
+            if isSuit == 'CORRECT':
+                cv2.rectangle(self.smallImages[side], start, end, config.GREEN, 2)
+            elif isSuit == 'CHECK' :
+                cv2.rectangle(self.smallImages[side], start, end, config.BLUE, 2)
+            else :
+                cv2.rectangle(self.smallImages[side], start, end, config.RED, 2)
 
     def show_Result(self):
         print("##-SHOW RESULT BUTTON CLICKED")
         ## You write the To-do method here and Set result
         self.graphicsView.setText("RESULT DATA")
+        keys = self.smallImages.keys()
+        result_path = self.absPath + self.deviceName + '/result'
+        config.makeDir(result_path)
 
+        for key in keys :
+            cv2.imwrite(result_path + '/' + key + '.jpg', self.smallImages[key])
+
+    def getArea(self, imageName):
+        temp = imageName.split('.')[-2].split('_')
+        side = self.sideName + str(self.sideNum)
+        cur = None
+        for roi in self.ROI[side]:
+            if roi.side == side and roi.element == temp[1] and roi.number == temp[2] :
+                cur = roi
+
+        st, end = cur.getArea()
+        return st, end, side
+
+def getResult(imageName, incorClass, classes, result_arr):
+    idxes = []
+    temp = imageName.split('_')
+
+    curClass = temp[0] + '_' + temp[1] + '_' + temp[2] + '_' + 'cor'
+    incorClasses = incorClass[temp[1]]
+    idxes.append(classes.index(curClass))
+    for incor in incorClasses : idxes.append(classes.index(incor))
+
+    max = -1.0
+    max_index = -1
+
+    for idx in idxes :
+        matchRate = result_arr[0][idx]
+        if matchRate > max :
+            max_index = idx
+            max = matchRate
+
+    if max < 0.95 : return 'CHECK'
+    elif max_index == idxes[0] : return 'CORRECT'
+    else : return 'INCORRECT'
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)

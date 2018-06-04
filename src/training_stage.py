@@ -253,7 +253,7 @@ class Ui_MainWindow(object):
 
 
     def do_NextSide(self):
-        self.cameraNum = (self.cameraNum + 1) % 2 # CAMERA CHANGE
+        self.cameraNum = (self.cameraNum + 1) % 1 # CAMERA CHANGE
         self.sideNum+=1
         side = self.side + str(self.sideNum)
         self.setState(side)

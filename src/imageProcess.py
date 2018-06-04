@@ -92,7 +92,6 @@ def image_capture(dirPath, side, cameraNum, doWriteROI):
     while True:
         if (len(selected_img) > 0):
             for rect in (selected_img):
-                print(rect[4])
                 if (rect[4] == True) or (rect[4] == 'True'):
                     cv2.rectangle(img, (rect[0], rect[1]), (rect[0] + rect[2], rect[1] + rect[3]), (0, 255, 0), 3)
                 else:
@@ -193,9 +192,9 @@ def showROI(cameraNum, dirPath):
     selected_img = readfile(dirPath)
     while True:
         ret, frame = capture.read()
-        if (rect[4] == True) or (rect[4] == 'True'):
+        if (len(selected_img) > 0):
             for rect in (selected_img):
-                if(rect[4]):
+                if (rect[4] == True) or (rect[4] == 'True'):
                     cv2.rectangle(frame, (rect[0], rect[1]), (rect[0] + rect[2], rect[1] + rect[3]), (0, 255, 0), 3)
                 else:
                     cv2.rectangle(frame, (rect[0], rect[1]), (rect[0] + rect[2], rect[1] + rect[3]), (255, 0, 0), 3)

@@ -15,7 +15,6 @@ import inputBox
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import Qt
 
-
 class Ui_Interface(object):
     def setupUi(self, _interface):
         self.interface = _interface
@@ -136,8 +135,6 @@ def main():
     ui.setupUi(Interface)
     Interface.show()
     sys.exit(app.exec_())
-
-
 
 if __name__ == "__main__":
     main()

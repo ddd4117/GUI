@@ -14,12 +14,11 @@ from PyQt5.QtCore import Qt
 import inputBox
 import config
 import os
-import train.ImportGraph as ImportGraph
-import train.ImportGraph as ImportGraph
-import train.roiUnit as roiUnit
+import ImportGraph
+import roiUnit
 import imageProcess
 import inputBox
-
+import predict
 
 class Ui_MainWindow(object):
     def __init__(self, _mainUI = None):
@@ -32,6 +31,10 @@ class Ui_MainWindow(object):
         self.img = numpy.ndarray
         self.imgview = QImage
         self.mainUI = _mainUI
+        self.cameraNum = 0
+        self.model = None
+        self.ROI = None
+        self.smallImages = {}
 
     def setupUi(self, _mainwindow):
         css = """QPushButton { background-color: white;
@@ -178,19 +181,24 @@ class Ui_MainWindow(object):
 
     def img_capture(self):
         print('##-CAPTURE BUTTON PRESSED')
+        self.ROI = roiUnit.readROI(self.absPath + self.deviceName + '/locationInfo.txt',
+                                   config.WINDOW_RATIO)
+
         predictPath = self.absPath + self.deviceName + '/predict'; config.makeDir(predictPath)
-        pImagePath= self.absPath + self.deviceName + '/predict/images'; config.makeDir(pImagePath)
+        pOImagePath= self.absPath + self.deviceName + '/predict/images'; config.makeDir(pOImagePath)
+        pCImagePath = self.absPath + self.deviceName + '/predict/imagesCanny'; config.makeDir(pCImagePath)
 
         side = self.sideName + str(self.sideNum)
-        self.img = imageProcess.test_image_capture(self.ROI[side], pImagePath, self.cameraNum)
+        print(self.ROI[side])
+        self.img = imageProcess.test_image_capture(self.ROI[side], pOImagePath, pCImagePath, self.cameraNum)
         cv2.imwrite(predictPath + '/' + side +'.jpg', self.img)
         self.imgview = QImage(self.img.data, self.img.shape[1], self.img.shape[0], QImage.Format_RGB888)
         self.graphicsView.setPixmap(QPixmap.fromImage(self.imgview))
 
     def do_Nextbutton(self):
-        self.sideNum += 1
-        self.camera = (self.camera + 1) % config.CAMERA_NUMBER
         print("##-NEXT BUTTON CLICKED")
+        self.sideNum += 1
+        self.cameraNum = (self.cameraNum + 1) % config.CAMERA_NUMBER
 
     def do_startTest(self):
         print("##-TEST BUTTON CLICKED")
@@ -207,19 +215,25 @@ class Ui_MainWindow(object):
                 else : incor_class[value] = [label]
 
         self.smallImages = {}
-        model = ImportGraph.ImportGraph(path, len(classes))
         for image in img_list :
             if not os.path.isdir(path + '/predict/' + image) :
                 self.smallImages[image.split('.')[0]] = cv2.imread(path + '/predict/' + image)
 
-        img_list = os.listdir(path + '/predict/images')
-        for image in img_list :
-            image_path = path + '/predict/images/' + image
-            print('test:', image_path)
+        img_list = os.listdir(path + '/predict/imagesCanny')
+        print('images to predict:', img_list)
 
-            result = model.predict(image_path)
-            print('Match rates:', result[0])
-            isSuit = getResult(image, incor_class, classes, result)
+        imageDir = path + '/predict/images'
+        modelFullPath = path + '/model/retrained_graph.pb'
+        labelsFullPath = path + '/model/retrained_labels.txt'
+        tensorName = self.deviceName
+        print('#Predicting')
+        results = predict.run_inference_on_image(modelFullPath, labelsFullPath, imageDir, tensorName)
+
+        for result in results :
+            image = result['imageName']
+            print('#Predict Result[{}]'.format(image))
+            matchRates = result['results']
+            isSuit = getResult(image, matchRates)
 
             print('result:', isSuit, end='\n')
 
@@ -239,13 +253,13 @@ class Ui_MainWindow(object):
         keys = self.smallImages.keys()
         result_path = self.absPath + self.deviceName + '/result'
         config.makeDir(result_path)
-
+        print('Sides:',keys)
         for key in keys :
             cv2.imwrite(result_path + '/' + key + '.jpg', self.smallImages[key])
 
     def getArea(self, imageName):
         temp = imageName.split('.')[-2].split('_')
-        side = self.sideName + str(self.sideNum)
+        side = temp[0]
         cur = None
         for roi in self.ROI[side]:
             if roi.side == side and roi.element == temp[1] and roi.number == temp[2] :
@@ -254,27 +268,16 @@ class Ui_MainWindow(object):
         st, end = cur.getArea()
         return st, end, side
 
-def getResult(imageName, incorClass, classes, result_arr):
-    idxes = []
+def getResult(imageName, result_arr):
     temp = imageName.split('_')
+    currect_class = temp[0] + '_' + temp[1] + '_' + 'cor'
+    temp = result_arr[0][0].decode('ascii').split(' ')
+    current_class = temp[0] + '_' + temp[1] + '_' + temp[3]
+    print(current_class, currect_class)
 
-    curClass = temp[0] + '_' + temp[1] + '_' + temp[2] + '_' + 'cor'
-    incorClasses = incorClass[temp[1]]
-    idxes.append(classes.index(curClass))
-    for incor in incorClasses : idxes.append(classes.index(incor))
-
-    max = -1.0
-    max_index = -1
-
-    for idx in idxes :
-        matchRate = result_arr[0][idx]
-        if matchRate > max :
-            max_index = idx
-            max = matchRate
-
-    if max < 0.95 : return 'CHECK'
-    elif max_index == idxes[0] : return 'CORRECT'
+    if result_arr[0][1] > 0.7 and current_class == currect_class : return 'CORRECT'
     else : return 'INCORRECT'
+
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)

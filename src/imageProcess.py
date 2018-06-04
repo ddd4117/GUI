@@ -2,42 +2,63 @@ import threading
 
 import cv2
 import os
-import train.Crop as Crop
+import Crop
 import pathlib
 import copy
 import config
 import inputBox
 import checkBox
+import roiUnit
 from PyQt5.QtGui import QImage
 from ipywidgets import Image
+def writefile(dirPath, img_list):
+    myfile = open(dirPath + "/data.txt", 'w+')
+    print(dirPath, img_list)
+    if(len(img_list) > 0):
+        for _img in img_list:
+            print(_img[0], _img[1], _img[2], _img[3])
+            myfile.write("%s:%s:%s:%s:%s\n" %(_img[0], _img[1], _img[2], _img[3], _img[4]))
+            myfile.flush()
+    myfile.close()
+    print("DONE")
 
-img_path_list = []
-selected_img = []
-def readfile():
-    f = open("./../data.txt", 'r')
+def readfile(dirPath):
+    if os.path.isfile(dirPath + "/data.txt"):
+        f = open(dirPath + "/data.txt", 'r+')
+    else :
+        return []
+
     lines = f.readlines()
-    f.close()
-    dic = {};
+    cordiList = []
     for line in lines:
-        left, right = line.split(':')
-        temp = list(right.split(','))
-        for i in range(len(temp)):
-            temp[i] = temp[i].strip()
-        dic[left] = temp
-    return dic
+        cordi = line.split(':')
+        cordi[0] = int(cordi[0])
+        cordi[1] = int(cordi[1])
+        cordi[2] = int(cordi[2])
+        cordi[3] = int(cordi[3])
+        cordi[4] = cordi[4].strip()
+        cordiList.append(cordi)
+    f.close()
+    print(cordiList)
+    return cordiList
 
 def getImage(cameraNum, conf) :
     cap = cv2.VideoCapture(cameraNum)
     cap.set(3, int(conf['width']))
     cap.set(4, int(conf['height']))
-    while True:
+
+    if config.AUTO_FOCUS:
+        while True:
+            ret, img = cap.read()
+            cv2.imshow('Video', img)
+            if cv2.waitKey(10) & 0xFF == 27:
+                break
+    else :
         ret, img = cap.read()
-        cv2.imshow('Video', img)
-        if cv2.waitKey(10) & 0xFF == 27:
-            break
+
     cap.release()
     cv2.destroyAllWindows()
-
+    print('# GET IMAGE FROM CAMERA#{}, AUTO_FOCUS: {}'.format(cameraNum, config.AUTO_FOCUS))
     return img
 
 def convert(coord, conf):
@@ -52,6 +73,9 @@ def convert(coord, conf):
 def image_capture(dirPath, side, cameraNum, doWriteROI):
     print(dirPath)
     if doWriteROI : file = open(dirPath + '/' + 'locationInfo.txt', "a+")
+    roiList = readfile(dirPath+"/"+side)
+    img_path_list = []
+    selected_img = roiList
     inputbox = inputBox.App("Enter the Object Name")
 
     origin = getImage(cameraNum, config.WINDOW_SIZE)
@@ -68,7 +92,8 @@ def image_capture(dirPath, side, cameraNum, doWriteROI):
     while True:
         if (len(selected_img) > 0):
             for rect in (selected_img):
-                if rect[4]:
+                print(rect[4])
+                if (rect[4] == True) or (rect[4] == 'True'):
                     cv2.rectangle(img, (rect[0], rect[1]), (rect[0] + rect[2], rect[1] + rect[3]), (0, 255, 0), 3)
                 else:
                     cv2.rectangle(img, (rect[0], rect[1]), (rect[0] + rect[2], rect[1] + rect[3]), (255, 0, 0), 3)
@@ -118,22 +143,26 @@ def image_capture(dirPath, side, cameraNum, doWriteROI):
             elif cv2.waitKey(1) & 0xFF == ord('s'):
                 print("##-IMAGE PROCESS COMPELTE")
                 cv2.destroyAllWindows()
+                writefile(dirPath, selected_img)
                 if(doWriteROI):
                     file.close()
-                return selected_img
+                return
 
-
-
-
-
-def test_image_capture(infos, path, cameraNum):
-    print('## Test image capture:', path)
+def test_image_capture(infos, O_path, C_path, cameraNum):
+    print('## Test image capture:', O_path, C_path)
     img = getImage(cameraNum, config.WINDOW_SIZE)
     number = 0
+
+    noise_min = config.NOISE_TEST['min']
+    noise_max = config.NOISE_TEST['max']
+
     for info in infos :
         cropped = img[info.startY:info.endY, info.startX:info.endX]
-        image_path = path + '/' + info.side + '_' + info.element + '_' + info.number + '_' + str(number) + '.jpg'
+        image_path = O_path + '/' + info.side + '_' + info.element + '_' + info.number + '_' + str(number) + '.jpg'
         cv2.imwrite(image_path, cropped)
+        canny = cv2.Canny(cropped, noise_min, noise_max)
+        image_path = C_path + '/' + info.side + '_' + info.element + '_' + info.number + '_' + str(number) + '.jpg'
+        cv2.imwrite(image_path, canny)
         number +=1
 
     return cv2.resize(img, (config.TESTWINDOW_SIZE['width'], config.TESTWINDOW_SIZE['height']))
@@ -156,13 +185,15 @@ def checkclicked(checkbox, dirPath, imCrop, x1, x2, y1, y2, file, side):
     file.flush()
     print("##-COMPLETE SAVE FILE : " + objName)
 
-def showROI(selectROI, cameraNum):
+def showROI(cameraNum, dirPath):
     capture = cv2.VideoCapture(cameraNum)
     capture.set(3, int(config.TESTWINDOW_SIZE['width']))
     capture.set(4, int(config.TESTWINDOW_SIZE['height']))
+    print(dirPath)
+    selected_img = readfile(dirPath)
     while True:
         ret, frame = capture.read()
-        if (len(selected_img) > 0):
+        if (rect[4] == True) or (rect[4] == 'True'):
             for rect in (selected_img):
                 if(rect[4]):
                     cv2.rectangle(frame, (rect[0], rect[1]), (rect[0] + rect[2], rect[1] + rect[3]), (0, 255, 0), 3)

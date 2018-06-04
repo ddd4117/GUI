@@ -10,11 +10,12 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import QState
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit
-import train.train as train
+import train
 import imageProcess
 from PyQt5.QtCore import Qt
 import pathlib
 import config
+
 class Ui_MainWindow(object):
     def __init__(self, _mainUI = None):
         self.absPath = './../res/'
@@ -23,7 +24,6 @@ class Ui_MainWindow(object):
         self.sideNum = 1
         self.cameraNum = 0
         self.mainUI = _mainUI
-        self.selectImg = []
     def setupUi(self, _MainWindow):
         css = """QPushButton { background-color: white;
                                 border-style: outset;
@@ -211,7 +211,8 @@ class Ui_MainWindow(object):
 
     def do_ShowROI(self):
         print("##-SHOW ROI")
-        imageProcess.showROI(self.selectImg, self.cameraNum)
+        path = self.absPath + self.dirName + '/' + self.side + str(self.sideNum)
+        imageProcess.showROI(self.cameraNum, path)
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
         self.MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
@@ -238,8 +239,6 @@ class Ui_MainWindow(object):
         #     out, err = proc.communicate()
         print("##-DELETE ALL")
 
-
-
     def do_Home(self):
         print("##-Return Home Stage")
         self.mainUI.show()
@@ -250,7 +249,7 @@ class Ui_MainWindow(object):
         print("##-INCORRECT CAPTURE START")
         path = self.absPath + self.dirName
         side = self.side + str(self.sideNum)
-        self.selectImg.extend(imageProcess.image_capture(path, side, self.cameraNum, False))
+        imageProcess.image_capture(path, side, self.cameraNum, False)
 
 
     def do_NextSide(self):
@@ -273,21 +272,21 @@ class Ui_MainWindow(object):
         config.makeDir(path + '/' + side)
 
         print("##IMAGE PROCESS PATH IS : " + path)
-        self.selectImg.extend(imageProcess.image_capture(path, side, self.cameraNum, True))
+        imageProcess.image_capture(path, side, self.cameraNum, True)
+        print(1)
 
     def create_image(self):
         #plz write the image path
         path = self.absPath + self.dirName
         print(path)
         train.copy_images(path)
+        print('#COPY IMAGES DONE')
 
     def make_model(self):
         #plz write the device path
-        path = 'test/testdevice1'
+        path = self.absPath + self.dirName
         print("Training device: " + path)
-        train.training(path)
-
-
+        train.execute_Train(self.dirName, path)
 
 if __name__ == "__main__":
     import sys
